@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boat Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #007BFF;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .boat-list {
+            margin-top: 20px;
+        }
+        .boat-item {
+            background: #f9f9f9;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-group button {
+            padding: 10px 15px;
+            background: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Boat Management</h1>
+    </header>
+    <div class="container">
+        <form id="boatForm">
+            <div class="form-group">
+                <label for="boatName">Boat Name</label>
+                <input type="text" id="boatName" required>
+            </div>
+            <div class="form-group">
+                <label for="boatDescription">Capacity</label>
+                <input type="text" id="boatDescription" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">Add Boat</button>
+            </div>
+        </form>
+        <div class="boat-list" id="boatList">
+            <h3>Boats:</h3>
+        </div>
+    </div>
+
+    <script>
+        const boatForm = document.getElementById('boatForm');
+        const boatList = document.getElementById('boatList');
+      
+        const fetchBoats = async () => {
+          const response = await fetch('http://localhost:3000/boats');
+          const boats = await response.json();
+          boatList.innerHTML = boats
+            .map(boat => `<div class="boat-item"><strong>${boat.name}</strong><p>${boat.description}</p></div>`)
+            .join('');
+        };
+      
+        boatForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+      
+          const boatName = document.getElementById('boatName').value;
+          const boatDescription = document.getElementById('boatDescription').value;
+      
+          await fetch('http://localhost:3000/boats', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: boatName, description: boatDescription }),
+          });
+      
+          boatForm.reset();
+          fetchBoats(); // Refresh the list
+        });
+      
+        fetchBoats(); // Initial fetch
+      </script>
+      
+</body>
+</html>
